@@ -66,6 +66,14 @@
           <button id="btn-browse-bundle" class="btn btn-secondary">Browse File</button>
           <input type="file" id="bundle-input" accept=".async,.tar" style="display: none;">
         </div>
+
+        <div class="recovery-section" style="margin-top: 15px;">
+           <h4 style="font-size: 12px; color: #888; margin-bottom: 8px; border-bottom: 1px solid #333; padding-bottom: 4px;">RECOVERY: RECENT DOWNLOADS</h4>
+           <div id="recent-bundles-list" style="max-height: 120px; overflow-y: auto;">
+              <!-- Recent items will be injected here -->
+              <p class="text-muted" style="font-size: 10px; text-align: center;">No recent bundles found</p>
+           </div>
+        </div>
       </section>
       
       <section class="viewer-display" id="viewer-display" style="display: none; text-align: center;">

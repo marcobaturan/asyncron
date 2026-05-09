@@ -60,6 +60,16 @@ Since Asyncron is a powerful, local-first tool, you can install it directly with
     *   Click the **Control Panel Icons** to extract attachments.
     *   **Links** will open directly in a new browser tab when clicked!
 
+### 🛡️ Bundle Recovery (Lost your file?)
+![Recovery Icon](./recovery.svg)
+
+Sometimes you might lose track of where a teammate's bundle was saved (e.g., inside the **Telegram Desktop** folder, **Downloads**, or **Chrome's default path**).
+
+Asyncron includes a **Recovery Feature** in the Viewer tab:
+1.  **Scan:** It automatically lists the 5 most recent `.async` files found in your browser's download history.
+2.  **Locate:** Click the **LOCATE** button next to any file. Asyncron will open your system's file explorer and highlight the exact file for you.
+3.  **Drag & View:** Simply drag that highlighted file into the Asyncron drop zone to start viewing.
+
 ---
 
 ## 📂 Intelligent Categorization

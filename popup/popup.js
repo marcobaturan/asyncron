@@ -33,9 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const panelCreate = document.getElementById('panel-create');
   const panelView = document.getElementById('panel-view');
 
-  const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('view') === 'true') {
     switchTab('view');
+    loadRecentBundles();
   }
 
   tabCreate.addEventListener('click', () => switchTab('create'));
@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tabCreate.classList.remove('active');
       panelView.style.display = 'block';
       panelCreate.style.display = 'none';
+      loadRecentBundles();
     }
   }
 
@@ -356,6 +357,54 @@ document.addEventListener('DOMContentLoaded', () => {
   const viewerDisplay = document.getElementById('viewer-display');
   const metaiconContainer = document.getElementById('metaicon-container');
   const bundleNameLabel = document.getElementById('bundle-name');
+  const recentBundlesList = document.getElementById('recent-bundles-list');
+
+  async function loadRecentBundles() {
+    if (!chrome.downloads) return;
+    
+    // Search for .async files in the download history
+    const items = await new Promise(resolve => {
+      chrome.downloads.search({
+        filenameRegex: '.*\\.async$',
+        limit: 5,
+        orderBy: ['-startTime']
+      }, resolve);
+    });
+
+    if (items && items.length > 0) {
+      recentBundlesList.innerHTML = '';
+      items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'recent-item';
+        div.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; background: #2a2a2a; border-radius: 4px; margin-bottom: 4px; border: 1px solid #333;';
+        
+        const info = document.createElement('div');
+        info.style.cssText = 'overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; margin-right: 10px;';
+        
+        const name = document.createElement('span');
+        name.style.cssText = 'font-size: 11px; color: #eee;';
+        name.textContent = item.filename.split(/[\\/]/).pop();
+        
+        const path = document.createElement('div');
+        path.style.cssText = 'font-size: 9px; color: #666;';
+        path.textContent = item.filename;
+
+        info.appendChild(name);
+        info.appendChild(path);
+
+        const btnLocate = document.createElement('button');
+        btnLocate.className = 'btn btn-small';
+        btnLocate.style.fontSize = '9px';
+        btnLocate.textContent = 'LOCATE';
+        btnLocate.title = 'Open folder to drag & drop';
+        btnLocate.onclick = () => chrome.downloads.showInFolder(item.id);
+
+        div.appendChild(info);
+        div.appendChild(btnLocate);
+        recentBundlesList.appendChild(div);
+      });
+    }
+  }
 
   btnBrowseBundle.addEventListener('click', () => bundleInput.click());
 
