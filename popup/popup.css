@@ -1,0 +1,265 @@
+:root {
+  --bg-color: #1e1e1e;
+  --panel-bg: #2d2d2d;
+  --text-color: #ffffff;
+  --text-muted: #a0a0a0;
+  --border-color: #404040;
+  --primary-color: #4A9EFF;
+  --danger-color: #ff4a4a;
+  --hover-color: #5bb0ff;
+  --disabled-bg: #404040;
+  --disabled-text: #808080;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 320px;
+  font-family: system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.container {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--primary-color);
+}
+
+.tabs {
+  display: flex;
+  margin-top: 12px;
+  background: var(--panel-bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 8px 0;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.tab-btn.active {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.tab-btn:hover:not(.active) {
+  background: var(--disabled-bg);
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background: var(--border-color);
+  margin: 4px 0;
+  width: 100%;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  background: var(--panel-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+  flex: 1;
+}
+
+.btn:hover:not(:disabled) {
+  border-color: var(--primary-color);
+}
+
+.btn-primary:not(:disabled):hover .icon.red {
+  color: var(--danger-color);
+}
+
+.icon {
+  font-size: 14px;
+}
+
+.icon.red {
+  color: var(--danger-color);
+}
+
+.btn:disabled {
+  background: var(--disabled-bg);
+  color: var(--disabled-text);
+  cursor: not-allowed;
+  border-color: transparent;
+}
+
+.source-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+select {
+  background: var(--panel-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 4px 8px;
+  outline: none;
+}
+
+.status-indicator {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.attachments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.attachments-header h2 {
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+.btn-small {
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+.input-text {
+  background: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 6px;
+  flex: 1;
+  font-family: inherit;
+}
+
+.attachments {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.btn-small:hover {
+  background: var(--panel-bg);
+  border-style: solid;
+}
+
+#attachment-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.attachment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--panel-bg);
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.attachment-item .filename {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+.btn-remove {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0 4px;
+}
+
+.btn-remove:hover {
+  color: var(--danger-color);
+}
+
+.btn-large {
+  width: 100%;
+  padding: 12px;
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.btn-large:hover:not(:disabled) {
+  background: var(--hover-color);
+  border-color: transparent;
+}
+
+.drop-zone {
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 30px 20px;
+  text-align: center;
+  background: var(--panel-bg);
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.drop-zone.dragover {
+  border-color: var(--primary-color);
+  background: rgba(74, 158, 255, 0.1);
+}
+
+.drop-zone p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}

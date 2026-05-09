@@ -1,0 +1,10 @@
+{
+  "extensionName": {
+    "message": "Asyncron",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "Zero-dependency Chrome Extension to package video recordings and files into .async bundles with interactive SVG metaicons.",
+    "description": "Description of the extension"
+  }
+}

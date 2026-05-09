@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asyncron</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>ASYNCRON</h1>
+      <div class="tabs">
+        <button id="tab-create" class="tab-btn active">CREATE</button>
+        <button id="tab-view" class="tab-btn">VIEWER</button>
+      </div>
+    </header>
+    
+    <div id="panel-create" class="panel active">
+    <section class="controls">
+      <div class="buttons">
+        <button id="btn-rec" class="btn btn-primary"><span class="icon red">●</span> REC</button>
+        <button id="btn-stop" class="btn btn-secondary" disabled><span class="icon">■</span> STOP</button>
+      </div>
+      <div class="source-select">
+        <label for="source">Source:</label>
+        <select id="source">
+          <option value="screen">Screen</option>
+          <option value="camera">Camera</option>
+          <option value="both">Both</option>
+        </select>
+      </div>
+      <div id="recording-status" class="status-indicator">Ready</div>
+    </section>
+
+    <hr>
+
+    <section class="attachments">
+      <div class="attachments-header">
+        <h2>Attachments:</h2>
+        <button id="btn-add-link" class="btn btn-small" style="margin-right: 5px;">+ Add Link</button>
+        <button id="btn-add-files" class="btn btn-small">+ Add files</button>
+        <input type="file" id="file-input" multiple style="display: none;">
+      </div>
+      <div id="link-input-container" style="display: none; margin-top: 10px; display: none; gap: 5px;">
+        <input type="url" id="link-input" placeholder="https://example.com" class="input-text">
+        <button id="btn-save-link" class="btn btn-small">Add</button>
+      </div>
+      <ul id="attachment-list">
+        <!-- List items will be injected here by popup.js -->
+      </ul>
+    </section>
+
+    <hr>
+
+    <section class="actions">
+      <button id="btn-create" class="btn btn-large" disabled>CREATE BUNDLE</button>
+    </section>
+    </div>
+
+    <div id="panel-view" class="panel" style="display: none;">
+      <section class="viewer-upload">
+        <div id="drop-zone" class="drop-zone">
+          <p>Drag & Drop an .async file here</p>
+          <p>or</p>
+          <button id="btn-browse-bundle" class="btn btn-secondary">Browse File</button>
+          <input type="file" id="bundle-input" accept=".async,.tar" style="display: none;">
+        </div>
+      </section>
+      
+      <section class="viewer-display" id="viewer-display" style="display: none; text-align: center;">
+        <h3 id="bundle-name">bundle.async</h3>
+        <p class="text-muted" style="font-size: 11px; margin-bottom: 10px;">Click icons below to extract</p>
+        <div id="metaicon-container" style="background: #222; padding: 10px; border-radius: 8px;"></div>
+      </section>
+    </div>
+  </div>
+  
+  <script src="popup.js" type="module"></script>
+</body>
+</html>
