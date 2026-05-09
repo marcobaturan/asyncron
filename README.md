@@ -2,62 +2,76 @@
 
 ![Asyncron Hero](./hero.svg)
 
-**Asyncron** es una extensión de Chrome diseñada para equipos remotos, flexibles y con horarios rotativos que necesitan una comunicación asíncrona de alta fidelidad. Permite grabar mensajes de video (pantalla/cámara) y empaquetarlos junto con archivos críticos (código, documentos, imágenes, enlaces) en un único archivo comprimido `.async`.
+**Asyncron** is a high-fidelity asynchronous communication tool designed for remote teams with flexible schedules and rotating shifts. It enables you to record video messages (screen/camera) and package them alongside critical files (code, documents, images, and links) into a single, cohesive `.async` bundle.
 
-## 🌐 ¿Por qué Asyncron? La Utilidad para Equipos Remotos
+## 🌐 Why Asyncron? High-Fidelity Remote Collaboration
 
-En entornos con **horarios flexibles y turnos rotativos**, la comunicación en tiempo real es a menudo imposible o ineficiente. Las explicaciones por texto pierden el matiz, y los videos sueltos pierden el contexto. 
+In environments with **flexible hours and time-zone gaps**, real-time meetings are often a bottleneck. Pure text lacks nuance, and scattered attachments lose their context.
 
-Asyncron resuelve esto permitiendo:
-*   **Preservación del Contexto:** No envíes solo un video; envía el video *junto* al código exacto que estabas revisando, el PDF de requisitos y los enlaces de referencia. Todo en un solo paquete.
-*   **Reducción de la Fatiga de Notificaciones:** En lugar de 5 archivos adjuntos y un link de video en un chat, el receptor recibe un único contenedor organizado.
-*   **Consumo a Demanda:** El compañero que entra en el turno de noche puede abrir el bundle y tener todas las herramientas listas para trabajar sin necesidad de preguntarte nada.
-
----
-
-## 🛠️ Manual de Instalación (Modo Desarrollador)
-
-Dado que Asyncron es una herramienta potente y personalizada, puedes instalarla directamente en tu navegador sin pasar por la tienda oficial:
-
-1.  **Descarga el código:** Clona este repositorio o descarga el archivo ZIP y descomprímelo en una carpeta local.
-2.  **Abre las Extensiones de Chrome:** En la barra de direcciones de Chrome, escribe `chrome://extensions/` y pulsa Enter.
-3.  **Activa el "Modo de desarrollador":** En la esquina superior derecha, activa el interruptor que dice **Developer mode**.
-4.  **Carga la extensión:** Haz clic en el botón **Load unpacked** (Cargar descomprimida) que aparecerá a la izquierda.
-5.  **Selecciona la carpeta:** Navega hasta la carpeta donde descomprimiste Asyncron y selecciona la carpeta raíz (donde está el archivo `manifest.json`).
-6.  **¡Listo!:** El icono de Asyncron aparecerá en tu barra de herramientas.
+Asyncron bridges this gap by providing:
+*   **Context Preservation:** Don't just send a video; send the video *anchored* to the exact code files, requirement PDFs, and reference links needed to act.
+*   **Zero-Overhead Organization:** Instead of 5 disjointed attachments in a chat thread, the recipient receives a single, organized container.
+*   **On-Demand Consumption:** A teammate starting their shift hours later has everything they need in one place, reducing the need for "where is that file?" follow-up questions.
 
 ---
 
-## 📖 Manual de Instrucciones Detallado
+## 🔄 Complete Workflow Example
 
-### 1. Crear un Bundle (Pestaña CREATE)
-*   **Selecciona la fuente:** Elige entre **Screen** (Pantalla), **Camera** (Cámara) o **Both** (Ambos - Modo PiP).
-*   **Graba:** Haz clic en **REC**. Si elegiste pantalla, selecciona la ventana o pestaña que deseas capturar.
-*   **Añade Contexto:**
-    *   **+ Add Files:** Sube cualquier archivo. La extensión lo categorizará automáticamente.
-    *   **+ Add Link:** Pega una URL. Se guardará como un acceso directo interactivo.
-*   **Finaliza:** Haz clic en **STOP** y luego en **CREATE BUNDLE**. Se descargará un archivo `.async`.
+Imagine you are a Lead Developer working in Europe, and your QA Engineer is in Australia.
 
-### 2. Ver un Bundle (Pestaña VIEWER)
-*   **Auto-Detección:** Si descargas un archivo `.async`, la extensión te ofrecerá abrirlo automáticamente.
-*   **Carga Manual:** Ve a la pestaña **VIEWER** y arrastra el archivo `.async` al área central.
-*   **Interactúa:** 
-    *   Haz clic en la **TV** para descargar el video de la grabación.
-    *   Haz clic en los **Iconos de la Botonera** para extraer los archivos adjuntos.
-    *   Si es un **Link**, ¡se abrirá directamente en una nueva pestaña!
+![Workflow Schematic](./workflow.svg)
+
+1.  **RECORD:** You open Asyncron and record a 2-minute walkthrough of a new feature implementation using the **Screen + Camera** mode.
+2.  **ATTACH:** You add the relevant `.js` and `.css` files, a screenshot of the expected UI, and a link to the Pull Request.
+3.  **BUNDLE:** You click **CREATE BUNDLE**. Asyncron generates `feature_v1.async`.
+4.  **SHARE:** You drop the `.async` file into your team's Slack or WhatsApp. You go to sleep.
+5.  **VIEW:** Your QA Engineer wakes up, downloads the file, and Asyncron's viewer opens automatically. They watch your explanation while having direct access to the code and links to start testing immediately.
 
 ---
 
-## 📂 Formatos y Categorías Soportadas
+## 🛠️ Installation Guide (Developer Mode)
 
-Asyncron es inteligente. Detecta automáticamente la naturaleza de tus archivos:
+Since Asyncron is a powerful, local-first tool, you can install it directly without using the Chrome Web Store:
 
-*   💻 **Código:** Soporta más de 50 extensiones (`.js`, `.py`, `.cpp`, `.rs`, `.php`, `.yml`, `.dockerfile`, etc.). Se representan con el icono de terminal.
-*   📄 **Documentos:** PDFs, Word, Excel, Markdown, TXT. Icono de hoja de papel.
-*   🖼️ **Imágenes:** PNG, JPG, SVG, WebP. Icono de galería.
-*   🔗 **Enlaces:** Cualquier URL guardada. Icono de mundo interactivo.
-*   🔊 **Audio:** MP3, WAV, OGG. Icono de auriculares.
+1.  **Download the Code:** Clone this repository or download the ZIP file and extract it.
+2.  **Open Chrome Extensions:** Navigate to `chrome://extensions/` in your browser.
+3.  **Enable "Developer mode":** Toggle the switch in the top right corner.
+4.  **Load Unpacked:** Click the **Load unpacked** button.
+5.  **Select Folder:** Choose the root directory of the extracted project (the one containing `manifest.json`).
+6.  **Done!** The Asyncron icon is now ready in your toolbar.
 
 ---
 
-**Asyncron v0.1.0** - Desarrollado para la eficiencia asíncrona.
+## 📖 Detailed User Manual
+
+### 1. Creating a Bundle (CREATE Tab)
+*   **Select Source:** Choose **Screen**, **Camera**, or **Both** (Picture-in-Picture mode).
+*   **Start Recording:** Click **REC**. Select the window or tab to capture if prompted.
+*   **Add Context:**
+    *   **+ Add Files:** Upload any file. The extension automatically categorizes it.
+    *   **+ Add Link:** Paste a URL to create an interactive shortcut inside the bundle.
+*   **Finalize:** Click **STOP**, then click **CREATE BUNDLE**.
+
+### 2. Viewing a Bundle (VIEWER Tab)
+*   **Auto-Detection:** When you download an `.async` file, the extension will prompt you to open it.
+*   **Manual Load:** Go to the **VIEWER** tab and drag & drop any `.async` file.
+*   **Interaction:** 
+    *   Click the **TV Screen** to download the main recording.
+    *   Click the **Control Panel Icons** to extract attachments.
+    *   **Links** will open directly in a new browser tab when clicked!
+
+---
+
+## 📂 Intelligent Categorization
+
+Asyncron automatically identifies your files to provide a rich visual experience:
+
+*   💻 **Code:** Support for 50+ extensions (`.js`, `.py`, `.rs`, `.html`, `.yml`, etc.).
+*   📄 **Documents:** PDFs, Word, Markdown, TXT.
+*   🖼️ **Images:** PNG, JPG, SVG, WebP.
+*   🔗 **Links:** Interactive URLs saved as shortcuts.
+*   🔊 **Audio:** MP3, WAV, OGG.
+
+---
+
+**Asyncron v0.1.0** - Built for asynchronous efficiency.
