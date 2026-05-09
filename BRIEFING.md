@@ -1,296 +1,274 @@
-# BRIEFING.md — Asyncron Chrome Extension
+# BRIEFING.md — Asyncron Firefox Port + Repo Restructure
 
 ## Project
-Asyncron is a Chrome Extension (Manifest V3) that allows users to package a
-video recording together with associated files (documents, images, audio, links,
-code) into a proprietary `.async` bundle. The bundle is shared via any web-based
-chat. Recipients with the extension installed see a compound SVG metaicon instead
-of a generic file attachment. Clicking parts of the metaicon downloads and opens
-the corresponding files using the system's default applications.
-
-## Purpose
-Async video communication for distributed teams working across time zones and
-rotating shifts. Replaces synchronous video calls with structured async bundles
-that are intuitive to consume via point-and-click.
+Port the working Asyncron Chrome Extension (PoC) to Firefox.
+Restructure the repository so both extensions coexist in separate subfolders.
+Both are popup-only (no chat injector in this version).
+No marketplace publishing — both are installed manually (Load Unpacked / Load Temporary Add-on).
 
 ## Framework paths
 - Rules: ~/Projects/AI_team/my-company-configuration/AG_Structure/.antigravity/rules.md
 - STYLE.md: ~/Projects/AI_team/my-company-configuration/STYLE.md
 - HITL: ~/Projects/AI_team/my-company-configuration/HITL.md
 - CLAUDE.md: ~/Projects/AI_team/my-company-configuration/CC_Structure/CLAUDE.md
-- Session continuity skill: ~/Projects/AI_team/my-company-configuration/AG_Structure/.agent/skills/session-continuity/SKILL.md
+- Session continuity: ~/Projects/AI_team/my-company-configuration/AG_Structure/.agent/skills/session-continuity/SKILL.md
+
+## Working directory
+~/Projects/portfolio/asyncron/
 
 ---
 
-## Hardware constraints (rule 93)
-- CPU: AMD Ryzen 7 series 4000 — 8 cores
-- RAM: 16 GB (shared iGPU)
-- OS: Debian 12 / Chrome browser
-- Extension runs in browser — no local compute budget concerns for MVP
+## Context — What exists
+
+The Chrome extension is a working PoC with:
+- Popup with two modes: **Packager** and **Unpackager**
+- Packager: record video, attach files, generate `.async` (uncompressed tar bundle)
+- Unpackager: open `.async` file, inspect contents, selectively open files with system apps
+- Bundle format: tar archive with `manifest.json` + categorised subfolders
+- Metaicon: compound SVG (TV screen + category subicons) — implemented in `lib/svg_icons.js`
+- Background: `service_worker.js` (Chrome MV3)
+- Shared libs: `lib/tar.js`, `lib/svg_icons.js`
+- Tests: `tests/test_phase1.js`, `tests/test_phase2.js` — all passing
 
 ---
 
-## Stack
+## SPEC 1 — Repository restructure
 
-| Layer | Technology | Rationale |
-|---|---|---|
-| Extension platform | Chrome Extension Manifest V3 | Required for Chrome Web Store |
-| UI framework | Vanilla JS + SVG | No framework needed — minimal UI |
-| Bundle format | `.async` = tar archive (no compression) | Open format, cross-platform, no proprietary dependency |
-| Tar implementation | `tar.js` (pure JS) or `js-tar` | Browser-compatible, no native binary |
-| Screen recording | `chrome.tabCapture` + `MediaRecorder API` | Native Chrome APIs |
-| Camera recording | `getUserMedia` + `MediaRecorder API` | Standard Web API |
-| Metaicon rendering | Inline SVG (injected into DOM) | Scalable, no external assets |
-| File type detection | MIME type + file extension map | Simple lookup table |
-| System file opening | `chrome.downloads` API | Opens with system default app |
-| Manifest version | V3 | Required — V2 is deprecated |
-
----
-
-## SPEC 1 — `.async` bundle format
-
-The `.async` file is a standard tar archive (uncompressed) with a fixed internal structure.
-
-### Internal structure
-```
-bundle.async (tar)
-├── manifest.json        ← metadata (version, creator, timestamp, file list)
-├── video/
-│   └── recording.webm   ← the main video (always present)
-├── documents/           ← optional
-│   └── [files...]
-├── images/              ← optional
-│   └── [files...]
-├── audio/               ← optional
-│   └── [files...]
-├── links/               ← optional
-│   └── links.json       ← array of {label, url}
-└── code/                ← optional
-    └── [files...]
-```
-
-### manifest.json structure
-```json
-{
-  "version": "1.0",
-  "created_at": "ISO8601 timestamp",
-  "creator": "optional display name",
-  "title": "optional bundle title",
-  "files": [
-    {
-      "category": "video|document|image|audio|link|code",
-      "filename": "recording.webm",
-      "mime_type": "video/webm",
-      "size_bytes": 1234567
-    }
-  ]
-}
-```
-
-### Validation rules
-- [ ] bundle must always contain exactly one video file
-- [ ] manifest.json must always be present and valid JSON
-- [ ] categories must be one of: video, document, image, audio, link, code
-- [ ] file paths inside tar must not contain `..` (path traversal prevention)
-
----
-
-## SPEC 2 — Metaicon (SVG compound icon)
-
-The metaicon is injected into the DOM of any web chat page when the extension
-detects a `.async` file attachment. It replaces the generic file attachment preview.
-
-### Visual structure
-```
-┌─────────────────────────┐
-│                         │
-│    [TV screen area]     │  ← clickable → downloads + opens video
-│    rounded corners      │
-│                         │
-└─────────────────────────┘
-│  [subicons row]         │  ← one icon per category present (not per file count)
-│  📜  📷  🔗  ♪  📷  <>  │
-└─────────────────────────┘
-```
-
-### Subicon mapping (SVG, not emoji)
-| Category | SVG icon | Appears when |
-|---|---|---|
-| document | scroll/parchment | ≥1 document file |
-| image | polaroid frame | ≥1 image file |
-| link | chain link | ≥1 link in links.json |
-| audio | musical note | ≥1 audio file |
-| video (secondary) | film camera | only if >1 video (rare) |
-| code | angle brackets `</>` | ≥1 code file |
-
-### Behaviour on click
-- Click TV screen area → download video file → browser opens with system default player
-- Click any subicon → download all files in that category → system opens each with default app
-- Hover on icon → tooltip showing category name and file count
-
-### SVG design constraints (4E principle — rule 94)
-- All icons are simple geometric SVG paths — no external image assets
-- Monochrome with accent color on hover (#4A9EFF — accessible blue)
-- TV screen: rounded rectangle, aspect ratio 16:9 area inside frame
-- Total icon dimensions: 120×100px viewBox
-- Dark mode compatible (uses currentColor where possible)
-
----
-
-## SPEC 3 — Extension structure (Manifest V3)
-
+Current structure (to be reorganised):
 ```
 asyncron/
-├── manifest.json
 ├── background/
-│   └── service_worker.js    ← handles bundle creation, file assembly
 ├── content_scripts/
-│   └── chat_injector.js     ← detects .async attachments, injects metaicon
-├── popup/
-│   ├── popup.html           ← recorder UI
-│   ├── popup.js
-│   └── popup.css
-├── icons/
-│   ├── icon16.png
-│   ├── icon48.png
-│   └── icon128.png
 ├── lib/
-│   ├── tar.js               ← tar bundle creation/extraction
-│   └── svg_icons.js         ← all SVG paths as JS constants
-└── _locales/
-    └── en/
-        └── messages.json
+├── popup/
+├── icons/
+├── tests/
+├── manifest.json
+└── package.json
 ```
 
-### manifest.json key fields
+Target structure:
+```
+asyncron/
+├── asyncron-chrome/          ← existing Chrome code moved here
+│   ├── background/
+│   │   └── service_worker.js
+│   ├── lib/
+│   │   ├── tar.js
+│   │   └── svg_icons.js
+│   ├── popup/
+│   │   ├── popup.html
+│   │   ├── popup.js
+│   │   └── popup.css
+│   ├── icons/
+│   ├── tests/
+│   │   ├── test_phase1.js
+│   │   └── test_phase2.js
+│   ├── manifest.json         ← MV3
+│   └── package.json
+│
+├── asyncron-firefox/         ← new Firefox port
+│   ├── background/
+│   │   └── background.js     ← MV2 background script (not service worker)
+│   ├── lib/
+│   │   ├── tar.js            ← copy from chrome (identical)
+│   │   ├── svg_icons.js      ← copy from chrome (identical)
+│   │   └── browser-polyfill.js ← webextension-polyfill
+│   ├── popup/
+│   │   ├── popup.html        ← copy, adjust script imports
+│   │   ├── popup.js          ← adapted (browser.* namespace)
+│   │   └── popup.css         ← copy (identical)
+│   ├── icons/                ← copy (identical)
+│   ├── tests/                ← copy (identical — logic unchanged)
+│   └── manifest.json         ← MV2
+│
+├── BRIEFING.md
+├── PROJECT.md
+├── SESSION_LOG.md
+└── README.md                 ← updated with both installation guides
+```
+
+### Migration rules
+- Move, do not copy, the Chrome files into `asyncron-chrome/`
+- All shared logic (tar.js, svg_icons.js) is duplicated into both folders — no symlinks
+- Rationale: each extension must be self-contained for manual loading
+
+---
+
+## SPEC 2 — Firefox manifest (MV2)
+
+File: `asyncron-firefox/manifest.json`
+
 ```json
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "Asyncron",
   "version": "0.1.0",
   "description": "Async video bundles for distributed teams",
   "permissions": [
-    "tabCapture",
+    "tabs",
     "downloads",
     "storage",
-    "activeTab"
-  ],
-  "host_permissions": [
     "<all_urls>"
   ],
   "background": {
-    "service_worker": "background/service_worker.js"
+    "scripts": ["lib/browser-polyfill.js", "background/background.js"],
+    "persistent": false
   },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content_scripts/chat_injector.js"]
-    }
-  ],
-  "action": {
+  "browser_action": {
     "default_popup": "popup/popup.html",
-    "default_icon": "icons/icon48.png"
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   }
 }
 ```
 
+Note: Firefox MV2 uses `browser_action` not `action`. No `tabCapture` permission
+needed if recording uses `getUserMedia` only (screen share via `getDisplayMedia`).
+
 ---
 
-## SPEC 4 — Recorder UI (popup)
+## SPEC 3 — Firefox background script
 
-### Layout
+File: `asyncron-firefox/background/background.js`
+
+This replaces the Chrome service worker. Firefox MV2 background scripts are
+persistent (event-based with `persistent: false`).
+
+Port `service_worker.js` with these changes:
+
+| Chrome (service_worker.js) | Firefox (background.js) |
+|---|---|
+| `chrome.downloads.download()` | `browser.downloads.download()` |
+| `chrome.runtime.onMessage` | `browser.runtime.onMessage` |
+| `chrome.storage.local` | `browser.storage.local` |
+| `self.addEventListener('install')` | Remove — not applicable in MV2 |
+| `importScripts()` | Use `<script>` tags in popup instead |
+
+If the polyfill (`browser-polyfill.js`) is loaded first, most `chrome.*` calls
+work as-is. Verify each API call individually.
+
+---
+
+## SPEC 4 — Firefox popup adaptation
+
+File: `asyncron-firefox/popup/popup.js`
+
+Changes required:
+1. Replace `chrome.runtime.sendMessage` with `browser.runtime.sendMessage`
+   OR load polyfill in popup.html before popup.js — then no changes needed.
+2. Screen recording: `chrome.tabCapture` is NOT available in Firefox popup context.
+   Use `navigator.mediaDevices.getDisplayMedia()` instead — works in both browsers.
+3. Camera: `navigator.mediaDevices.getUserMedia()` — identical in both browsers.
+
+### popup.html script load order (Firefox)
+```html
+<script src="../lib/browser-polyfill.js"></script>
+<script src="../lib/tar.js" type="module"></script>
+<script src="../lib/svg_icons.js" type="module"></script>
+<script src="popup.js" type="module"></script>
 ```
-┌──────────────────────────────┐
-│  ASYNCRON                    │
-├──────────────────────────────┤
-│  [● REC]  [■ STOP]           │  ← recording controls
-│  Source: [Screen ▼]          │  ← dropdown: Screen / Camera / Both
-├──────────────────────────────┤
-│  Attachments:                │
-│  [+ Add files]               │
-│  📄 report.pdf        [×]    │
-│  🎵 briefing.mp3      [×]    │
-├──────────────────────────────┤
-│  [  CREATE BUNDLE  ]         │  ← disabled until recording exists
-└──────────────────────────────┘
+
+Note: Firefox MV2 does not support ES modules in background scripts but DOES
+support them in popup context. Verify during testing.
+
+---
+
+## SPEC 5 — webextension-polyfill installation
+
+```bash
+cd asyncron-firefox/lib/
+# Download the polyfill directly (no npm needed for a self-contained extension)
+curl -L https://unpkg.com/webextension-polyfill@0.12.0/dist/browser-polyfill.min.js \
+     -o browser-polyfill.js
 ```
 
-### Behaviour
-- REC button starts recording (screen, camera, or both via PiP)
-- STOP button stops recording and saves webm to memory
-- Add files opens file picker — files added to attachment list
-- CREATE BUNDLE assembles tar archive → downloads as `asyncron_[timestamp].async`
-- Bundle creation is disabled if no video recorded
+Verify version compatibility: polyfill 0.12.0 supports Firefox 55+.
 
 ---
 
-## SPEC 5 — Chat injector (content script)
+## SPEC 6 — README update
 
-### Detection logic
-```javascript
-// Scan DOM for links or elements containing .async
-// Supported chat platforms (MVP): any page with <a href="*.async"> or
-// file attachment elements containing .async filename
+File: `asyncron/README.md`
+
+Must contain these sections:
+
+### Structure
+Brief description of the two subfolders.
+
+### Chrome — Manual installation
+```
+1. Open Chrome → chrome://extensions/
+2. Enable "Developer mode" (top right toggle)
+3. Click "Load unpacked"
+4. Select the asyncron-chrome/ folder
+5. Extension appears in toolbar
 ```
 
-### Injection logic
-1. Find `.async` attachment elements in page DOM
-2. Fetch the `.async` file (or read from download)
-3. Parse tar → read manifest.json
-4. Generate SVG metaicon from manifest categories
-5. Replace or wrap the original attachment element with metaicon
-6. Attach click handlers per category
+### Firefox — Manual installation
+```
+1. Open Firefox → about:debugging
+2. Click "This Firefox"
+3. Click "Load Temporary Add-on"
+4. Navigate to asyncron-firefox/ folder
+5. Select manifest.json
+6. Extension appears in toolbar
+Note: temporary add-on is removed on Firefox restart.
+For permanent install without signing: use Firefox Developer Edition
+and set xpinstall.signatures.required = false in about:config
+```
 
-### Supported chat platforms (MVP — detect by hostname)
-- Slack (app.slack.com)
-- Google Chat (chat.google.com)
-- Telegram Web WebK (web.telegram.org/k/) — note: different DOM from WebZ
-- Telegram Web WebZ (web.telegram.org/a/) — note: different DOM from WebK
-- Generic fallback: any `<a>` tag with `.async` extension
+### How to use — Packager mode
+Brief step-by-step: open popup → record → attach files → create bundle → send .async file.
 
-Note — WhatsApp Web and Microsoft Teams deferred to v2:
-- WhatsApp Web: heavy DOM mutation + end-to-end encryption complicates injection
-- Teams: file attachments served from SharePoint domain, CORS issues likely
+### How to use — Unpackager mode
+Brief step-by-step: open popup → switch to unpackager → open .async → click categories to open files.
 
----
-
-## SPEC 6 — QA requirements
-
-- Unit test: tar bundle created with correct internal structure
-- Unit test: manifest.json parsed correctly from bundle
-- Unit test: metaicon SVG generated for each category combination
-- Unit test: file type → category mapping correct for 20 common MIME types
-- Integration test: record screen → create bundle → bundle contains valid video
-- Integration test: inject metaicon into mock DOM element
-- Manual test: end-to-end on Slack Web and WhatsApp Web
+### .async bundle format
+Brief description of internal tar structure and manifest.json.
 
 ---
 
-## SPEC 7 — Icons
+## SPEC 7 — QA
 
-### Extension icon
-Simple geometric icon: async symbol (⟳) inside a screen shape. SVG exported to PNG at 16, 48, 128px.
+After restructure and Firefox port:
 
-### Metaicon SVG (embedded in svg_icons.js)
-All subicons are pure SVG paths defined as JS string constants.
-No external image dependencies. No emoji. No Unicode symbols.
+- [ ] Chrome extension still loads correctly from `asyncron-chrome/`
+- [ ] Firefox extension loads from `asyncron-firefox/` via about:debugging
+- [ ] Packager: create `.async` bundle in Firefox
+- [ ] Unpackager: open `.async` bundle created by Chrome in Firefox (cross-browser compatibility)
+- [ ] Unpackager: open `.async` bundle created by Firefox in Chrome (cross-browser compatibility)
+- [ ] README installation instructions verified on both browsers
 
 ---
 
-## Out of scope (MVP)
-- End-to-end encryption of bundle contents
-- Bundle password protection
-- Video compression or transcoding
-- Mobile Chrome extension (desktop Chrome only for MVP)
-- Chrome Web Store submission
-- Backend server or user accounts
+## Technical differences summary
+
+| Feature | Chrome (MV3) | Firefox (MV2) |
+|---|---|---|
+| Background | Service Worker | Background Script |
+| API namespace | `chrome.*` | `browser.*` (polyfill bridges both) |
+| Screen capture | `chrome.tabCapture` or `getDisplayMedia` | `getDisplayMedia` only |
+| ES modules in popup | ✅ | ✅ |
+| ES modules in background | ✅ (SW) | ❌ (use polyfill + concatenated scripts) |
+| Marketplace cost | $5 one-time | Free |
+| Temporary load | Load Unpacked | Load Temporary Add-on (lost on restart) |
+| Permanent unsigned install | ✅ Developer mode | Firefox Developer Edition only |
 
 ---
 
 ## 4E evaluation (rule 94)
 | Criterion | Assessment |
 |---|---|
-| Economic | Zero backend cost — pure client-side extension |
-| Efficient | tar (no compression) keeps CPU usage minimal |
-| Effective | Single click to consume any content type |
-| Ecological | No server infrastructure, no data transfer beyond the file itself |
+| Economic | Zero cost — Firefox Add-ons is free |
+| Efficient | Shared logic duplicated, not symlinked — self-contained, no build step |
+| Effective | Same UX on both browsers from identical popup UI |
+| Ecological | No server, no build pipeline, minimal dependencies |

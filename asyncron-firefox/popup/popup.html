@@ -74,6 +74,12 @@
               <p class="text-muted" style="font-size: 10px; text-align: center;">No recent bundles found</p>
            </div>
         </div>
+
+        <div style="margin-top: 20px; text-align: center;">
+          <button id="btn-full-viewer" class="btn btn-secondary btn-small" style="width: 100%; border: 1px solid var(--accent-color); color: var(--accent-color);">
+            ↗️ OPEN FULLSTANDALONE VIEWER
+          </button>
+        </div>
       </section>
       
       <section class="viewer-display" id="viewer-display" style="display: none; text-align: center;">
@@ -84,6 +90,9 @@
     </div>
   </div>
   
+  <script src="../lib/browser-polyfill.js"></script>
+  <script src="../lib/tar.js" type="module"></script>
+  <script src="../lib/svg_icons.js" type="module"></script>
   <script src="popup.js" type="module"></script>
 </body>
 </html>

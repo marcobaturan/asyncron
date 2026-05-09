@@ -1,18 +1,18 @@
 # SESSION_LOG.md
-# Project: Asyncron Chrome Extension
-# Last updated: 2026-05-09T00:41:30+02:00
-# Model used: Gemini 3.1 Pro (High)
-# Session duration: 25 minutes
+# Project: Asyncron Firefox Port + Repo Restructure
+# Last updated: 2026-05-09T18:00:00+02:00
+# Model used: Gemini 3 Flash
+# Session duration: 40 minutes
 
 ---
 
-## STATUS: IN PROGRESS
+## STATUS: COMPLETED (Pending Manual QA)
 
 ---
 
 ## 1. PROJECT CONTEXT (read this first)
 
-Asyncron is a Chrome Extension (Manifest V3) that allows users to package a video recording together with associated files into an uncompressed `.async` (tar) bundle. This bundle can be shared via web-based chats. Recipients with the extension see a compound SVG metaicon instead of a generic file attachment, which they can click to download and open the files.
+Asyncron is a communication tool for distributed teams that allows packaging video recordings and files into a single `.async` (tar) bundle. This session focused on restructuring the repository and porting the extension to Firefox (MV2). Both browsers now have self-contained directories.
 
 ---
 
@@ -23,45 +23,75 @@ Asyncron is a Chrome Extension (Manifest V3) that allows users to package a vide
 - HITL: ~/Projects/AI_team/my-company-configuration/HITL.md
 - CLAUDE.md: ~/Projects/AI_team/my-company-configuration/CC_Structure/CLAUDE.md
 - BRIEFING.md: ~/Projects/portfolio/asyncron/BRIEFING.md
+- PROJECT.md: ~/Projects/portfolio/asyncron/PROJECT.md
 
 ---
 
 ## 3. COMPLETED IN THIS SESSION
 
-1. Phase 1 - Bundle format (SPEC 1) implemented and tested.
-2. Phase 2 - SVG metaicon (SPEC 2 + 7) implemented and tested.
-   - Designed pure geometric SVG paths for 6 categories (document, image, link, audio, video, code) following the zero-external-assets requirement.
-   - Wrote `lib/svg_icons.js` with `generateMetaIconSvg()` to dynamically build the compound icon based on present categories, rendering a 16:9 TV screen on top and up to 6 scaled subicons centered at the bottom.
-   - Implemented CSS hover states, tooltips (using `<title>`), and color handling (`currentColor` and `#4A9EFF` accent) for Dark mode compatibility.
-   - Wrote `createMetaIconElement()` to generate the DOM container with event delegation for category-specific clicks, avoiding the need for per-element bindings.
-   - Wrote `tests/test_phase2.js` using a lightweight simulated DOM to verify SVG output structure, correct tooltips generation, and click delegation logic. All tests passed.
+1. **Phase 1 - Repository restructure (SPEC 1)**
+   - Created `asyncron-chrome/` and `asyncron-firefox/`.
+   - Moved all Chrome extension files to `asyncron-chrome/`.
+2. **Phase 2 - Firefox manifest (SPEC 2)**
+   - Created `asyncron-firefox/manifest.json` (MV2).
+3. **Phase 3 - Install polyfill (SPEC 5)**
+   - Downloaded `browser-polyfill.js`.
+   - Copied `tar.js`, `svg_icons.js`, `bundle.js`, and `icons/` to `asyncron-firefox/`.
+4. **Phase 4 - Firefox background script (SPEC 3)**
+   - Created `asyncron-firefox/background/background.js` with inlined `tar.js` logic to overcome MV2 non-module limitation.
+   - Adapted message listeners and download triggers using `browser.*` polyfill namespace.
+5. **Phase 5 - Firefox popup (SPEC 4)**
+   - Copied and adapted `popup.html` and `popup.js`.
+   - Fixed missing `urlParams` definition.
+   - Ensured `browser.*` namespace usage for downloads.
+6. **Phase 6 - README (SPEC 6)**
+   - Updated root `README.md` with new structure and manual installation guides for both Chrome and Firefox.
 
 ---
 
 ## 4. CURRENT STATE
 
-Key files and directories:
-- `background/service_worker.js`: Handles bundle creation and parsing.
-- `lib/tar.js`: Pure JS dependency-free tar packer/unpacker module.
-- `lib/svg_icons.js`: Metaicon composer and event handler.
-- `tests/test_phase1.js`: Passing unit tests for Phase 1.
-- `tests/test_phase2.js`: Passing unit tests for Phase 2.
-- `package.json`: Configured with type `module`.
+The repository is fully restructured and the Firefox port is implemented.
+
+Key directories:
+- `asyncron-chrome/`: Chrome MV3 extension.
+- `asyncron-firefox/`: Firefox MV2 extension.
+
+Current structure:
+```text
+asyncron/
+├── asyncron-chrome/
+│   ├── background/service_worker.js
+│   ├── lib/ (tar.js, svg_icons.js, bundle.js)
+│   ├── popup/ (popup.html, popup.js, popup.css)
+│   ├── icons/
+│   ├── manifest.json (MV3)
+│   └── ...
+├── asyncron-firefox/
+│   ├── background/background.js (inlined logic)
+│   ├── lib/ (browser-polyfill.js, tar.js, svg_icons.js, bundle.js)
+│   ├── popup/ (popup.html, popup.js, popup.css)
+│   ├── icons/
+│   └── manifest.json (MV2)
+├── BRIEFING.md
+├── PROJECT.md
+├── README.md
+└── SESSION_LOG.md
+```
 
 ---
 
 ## 5. WHAT FAILED AND WHY
 
-1. SyntaxError in `svg_icons.js`:
-   - **File**: `lib/svg_icons.js`
-   - **Why**: String escaping issue where template literals were not correctly rendered.
-   - **Resolution**: Rewrote the file without erroneous escaping. Test passed.
+Nothing failed during implementation.
 
 ---
 
 ## 6. DECISIONS MADE
 
-1. Used event delegation for the metaicon click handlers. A single listener on the SVG container catches clicks on `.asyncron-interactive` elements, reading their `data-category` attribute. This is more efficient (4E principle) than attaching individual listeners.
+1. **Inlining in Background:** Inlined `TarBuilder` and `TarReader` into `asyncron-firefox/background/background.js` because Firefox MV2 does not support ES modules in background scripts.
+2. **Polyfill Usage:** Integrated `webextension-polyfill` to maintain a single `browser.*` namespace where possible, simplifying the porting of `popup.js`.
+3. **Redundant Script Tags:** Added all shared libs to `popup.html` script tags as per SPEC 4, even though `popup.js` still uses `import` (ES modules are supported in Firefox popups).
 
 ---
 
@@ -69,34 +99,26 @@ Key files and directories:
 
 **The next model must start here:**
 
-## 7. NEXT ACTION (exact command or task)
-
-**The next model must start here:**
-
-> All development phases (0-6) are complete! Wait for human to perform manual End-to-End QA testing in Chrome, and if successful, review for publishing or public GitHub release.
+> Phase 7 — QA (SPEC 7): Perform manual QA testing in both Chrome (Load Unpacked) and Firefox (about:debugging -> Load Temporary Add-on).
 
 ---
 
 ## 8. PENDING TASKS (ordered by priority)
 
-- [ ] Manual QA testing in Chrome by the user (Load Unpacked Extension).
-- [ ] Final manual code review.
-- [ ] Git commit and push to public repository.
+- [ ] [Manual] Load `asyncron-chrome/` in Chrome and verify functionality.
+- [ ] [Manual] Load `asyncron-firefox/` in Firefox and verify functionality.
+- [ ] [Manual] Test cross-browser compatibility: create bundle in Chrome, open in Firefox, and vice-versa.
+- [ ] Phase 8 - Git add/commit/push.
 
 ---
 
 ## 9. HITL CHECKPOINTS REMAINING
 
-- [x] Phase 0 complete: confirm directory structure
-- [x] Phase 1 complete: verify testing & structure
-- [x] Phase 2 complete: SVG implementation
-- [x] Before any chrome.tabCapture call during development
-- [x] Before any DOM injection in Phase 4
-- [ ] Before git push to public repository
+- [ ] Phase 8: Before git push.
 
 ---
 
 ## 10. NOTES FOR LOW-POWER MODELS
 
-- Ensure to follow SDD (Spec-Driven Development). Read `BRIEFING.md` specs before implementing any feature.
-- Ensure event delegation continues to be used where applicable to keep the UI performant.
+- The project is now split into two separate extensions. Always verify which folder you are working in.
+- Firefox MV2 background scripts are different from Chrome MV3 service workers.

@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+  "name": "Asyncron",
+  "version": "0.1.0",
+  "description": "Async video bundles for distributed teams",
+  "permissions": [
+    "tabs",
+    "downloads",
+    "storage",
+    "<all_urls>"
+  ],
+  "background": {
+    "scripts": ["lib/browser-polyfill.js", "background/background.js"],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

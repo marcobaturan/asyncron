@@ -13,6 +13,8 @@ let recordedVideoBlob = null;
 let activeStream = null;
 let animationFrameId = null;
 
+const urlParams = new URLSearchParams(window.location.search);
+
 document.addEventListener('DOMContentLoaded', () => {
   const btnRec = document.getElementById('btn-rec');
   const btnStop = document.getElementById('btn-stop');
@@ -360,20 +362,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const recentBundlesList = document.getElementById('recent-bundles-list');
 
   async function loadRecentBundles() {
-    if (!chrome.downloads) return;
+    if (!browser.downloads) return;
     
-    // Search for .async files in the download history
-    const items = await new Promise(resolve => {
-      chrome.downloads.search({
-        filenameRegex: '.*\\.async$',
-        limit: 5,
-        orderBy: ['-startTime']
-      }, resolve);
+    // In Firefox, filenameRegex is not supported, we use query and filter manually
+    const items = await browser.downloads.search({
+      query: '.async',
+      limit: 20,
+      orderBy: ['-startTime']
     });
 
-    if (items && items.length > 0) {
+    const asyncFiles = items.filter(item => item.filename.endsWith('.async')).slice(0, 5);
+
+    if (asyncFiles && asyncFiles.length > 0) {
       recentBundlesList.innerHTML = '';
-      items.forEach(item => {
+      asyncFiles.forEach(item => {
         const div = document.createElement('div');
         div.className = 'recent-item';
         div.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; background: #2a2a2a; border-radius: 4px; margin-bottom: 4px; border: 1px solid #333;';
@@ -397,13 +399,26 @@ document.addEventListener('DOMContentLoaded', () => {
         btnLocate.style.fontSize = '9px';
         btnLocate.textContent = 'LOCATE';
         btnLocate.title = 'Open folder to drag & drop';
-        btnLocate.onclick = () => chrome.downloads.showInFolder(item.id);
+        btnLocate.onclick = () => {
+          if (browser.downloads.show) {
+            browser.downloads.show(item.id);
+          } else {
+            console.log("browser.downloads.show not available");
+          }
+        };
 
         div.appendChild(info);
         div.appendChild(btnLocate);
         recentBundlesList.appendChild(div);
       });
     }
+  }
+
+  const btnFullViewer = document.getElementById('btn-full-viewer');
+  if (btnFullViewer) {
+    btnFullViewer.addEventListener('click', () => {
+      browser.tabs.create({ url: browser.runtime.getURL('viewer.html') });
+    });
   }
 
   btnBrowseBundle.addEventListener('click', () => bundleInput.click());
@@ -464,7 +479,10 @@ document.addEventListener('DOMContentLoaded', () => {
           if (!fileObj.data) return;
           
           if (fileObj.meta.category === 'link') {
-            const urlStr = new TextDecoder("utf-8").decode(fileObj.data);
+            let urlStr = new TextDecoder("utf-8").decode(fileObj.data);
+            if (!urlStr.match(/^https?:\/\//)) {
+              urlStr = 'https://' + urlStr;
+            }
             window.open(urlStr, '_blank');
             return;
           }

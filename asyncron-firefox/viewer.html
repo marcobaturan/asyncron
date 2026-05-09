@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asyncron Viewer</title>
+  <style>
+    :root {
+      --bg-color: #0f0f12;
+      --panel-bg: #1a1a20;
+      --accent-color: #4A9EFF;
+      --text-color: #eee;
+      --text-muted: #888;
+      --border-color: #333;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Inter', -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    header {
+      width: 100%;
+      padding: 20px 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-color);
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, #fff, var(--accent-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .main-container {
+      max-width: 1000px;
+      width: 90%;
+      margin: 40px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    #drop-zone {
+      border: 2px dashed var(--border-color);
+      border-radius: 20px;
+      padding: 60px;
+      text-align: center;
+      transition: all 0.3s ease;
+      background: var(--panel-bg);
+      cursor: pointer;
+    }
+
+    #drop-zone.dragover {
+      border-color: var(--accent-color);
+      background: rgba(74, 158, 255, 0.05);
+      transform: scale(1.02);
+    }
+
+    .btn {
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      filter: brightness(1.1);
+      transform: translateY(-2px);
+    }
+
+    #viewer-display {
+      display: none;
+      background: var(--panel-bg);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .video-container {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: black;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      border: 1px solid var(--border-color);
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .bundle-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .bundle-info h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .bundle-info p {
+      margin: 5px 0 0;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .attachments-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 20px;
+    }
+
+    .attachment-card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+
+    .attachment-card:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: var(--accent-color);
+      transform: translateY(-5px);
+    }
+
+    .attachment-card .icon {
+      font-size: 32px;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .attachment-card .name {
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: block;
+    }
+
+    .attachment-card .category {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 4px;
+      display: block;
+    }
+
+    .metaicon-preview {
+       margin: 0 auto;
+       display: flex;
+       justify-content: center;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ASYNCRON VIEWER</h1>
+  </header>
+
+  <div class="main-container">
+    <div id="drop-zone">
+      <div style="font-size: 48px; margin-bottom: 20px;">📦</div>
+      <h2 style="margin-top: 0;">Open an .async bundle</h2>
+      <p style="color: var(--text-muted);">Drag and drop your file here to see the recording and attachments.</p>
+      <button class="btn" onclick="document.getElementById('file-input').click()">Browse Files</button>
+      <input type="file" id="file-input" accept=".async,.tar" style="display: none;">
+    </div>
+
+    <div id="viewer-display">
+      <div class="bundle-header">
+        <div class="bundle-info">
+          <h2 id="bundle-name">My Recording.async</h2>
+          <p id="bundle-date">Date: Unknown</p>
+        </div>
+        <button class="btn" onclick="location.reload()">Open Another</button>
+      </div>
+
+      <div class="video-container">
+        <video id="main-video" controls autoplay></video>
+      </div>
+
+      <div id="metaicon-display" class="metaicon-preview"></div>
+
+      <div id="attachments-list" class="attachments-grid">
+        <!-- Attachments will be listed here -->
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="viewer.js"></script>
+</body>
+</html>

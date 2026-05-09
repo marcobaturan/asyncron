@@ -1,8 +1,17 @@
 # Asyncron 📺
 
-![Asyncron Hero](./hero.svg)
+![Asyncron Logo](./assets/logo.png)
 
 **Asyncron** is a high-fidelity asynchronous communication tool designed for remote teams with flexible schedules and rotating shifts. It enables you to record video messages (screen/camera) and package them alongside critical files (code, documents, images, and links) into a single, cohesive `.async` bundle.
+
+## 📁 Repository Structure
+
+- `asyncron-chrome/`: Chrome Extension (Manifest V3)
+- `asyncron-firefox/`: Firefox Extension (Manifest V2)
+
+Both versions share the same core logic and UI, but are optimized for their respective browser requirements.
+
+---
 
 ## 🌐 Why Asyncron? High-Fidelity Remote Collaboration
 
@@ -19,7 +28,7 @@ Asyncron bridges this gap by providing:
 
 Imagine you are a Lead Developer working in Europe, and your QA Engineer is in Australia.
 
-![Workflow Schematic](./workflow.svg)
+![Workflow Schematic](./asyncron-chrome/workflow.svg)
 
 1.  **RECORD:** You open Asyncron and record a 2-minute walkthrough of a new feature implementation using the **Screen + Camera** mode.
 2.  **ATTACH:** You add the relevant `.js` and `.css` files, a screenshot of the expected UI, and a link to the Pull Request.
@@ -31,14 +40,20 @@ Imagine you are a Lead Developer working in Europe, and your QA Engineer is in A
 
 ## 🛠️ Installation Guide (Developer Mode)
 
-Since Asyncron is a powerful, local-first tool, you can install it directly without using the Chrome Web Store:
+### Chrome Installation
+1.  Navigate to `chrome://extensions/` in your browser.
+2.  Enable **"Developer mode"** (top right toggle).
+3.  Click **"Load unpacked"**.
+4.  Select the `asyncron-chrome/` folder in this repository.
+5.  The extension appears in your toolbar.
 
-1.  **Download the Code:** Clone this repository or download the ZIP file and extract it.
-2.  **Open Chrome Extensions:** Navigate to `chrome://extensions/` in your browser.
-3.  **Enable "Developer mode":** Toggle the switch in the top right corner.
-4.  **Load Unpacked:** Click the **Load unpacked** button.
-5.  **Select Folder:** Choose the root directory of the extracted project (the one containing `manifest.json`).
-6.  **Done!** The Asyncron icon is now ready in your toolbar.
+### Firefox Installation
+1.  Navigate to `about:debugging` in Firefox.
+2.  Click **"This Firefox"** in the sidebar.
+3.  Click **"Load Temporary Add-on..."**.
+4.  Navigate to the `asyncron-firefox/` folder and select `manifest.json`.
+5.  The extension appears in your toolbar.
+*Note: Temporary add-ons are removed when Firefox restarts. For permanent installation, use Firefox Developer Edition.*
 
 ---
 
@@ -61,26 +76,21 @@ Since Asyncron is a powerful, local-first tool, you can install it directly with
     *   **Links** will open directly in a new browser tab when clicked!
 
 ### 🛡️ Bundle Recovery (Lost your file?)
-![Recovery Icon](./recovery.svg)
+![Recovery Icon](./asyncron-chrome/recovery.svg)
 
-Sometimes you might lose track of where a teammate's bundle was saved (e.g., inside the **Telegram Desktop** folder, **Downloads**, or **Chrome's default path**).
-
-Asyncron includes a **Recovery Feature** in the Viewer tab:
+Sometimes you might lose track of where a teammate's bundle was saved. Asyncron includes a **Recovery Feature** in the Viewer tab:
 1.  **Scan:** It automatically lists the 5 most recent `.async` files found in your browser's download history.
-2.  **Locate:** Click the **LOCATE** button next to any file. Asyncron will open your system's file explorer and highlight the exact file for you.
-3.  **Drag & View:** Simply drag that highlighted file into the Asyncron drop zone to start viewing.
+2.  **Locate:** Click the **LOCATE** button next to any file to open the folder and highlight it.
+3.  **Drag & View:** Drag that file into the Asyncron drop zone to start viewing.
 
 ---
 
-## 📂 Intelligent Categorization
+## 📦 Bundle Format (.async)
 
-Asyncron automatically identifies your files to provide a rich visual experience:
-
-*   💻 **Code:** Support for 50+ extensions (`.js`, `.py`, `.rs`, `.html`, `.yml`, etc.).
-*   📄 **Documents:** PDFs, Word, Markdown, TXT.
-*   🖼️ **Images:** PNG, JPG, SVG, WebP.
-*   🔗 **Links:** Interactive URLs saved as shortcuts.
-*   🔊 **Audio:** MP3, WAV, OGG.
+The `.async` bundle is a standard uncompressed `tar` archive containing:
+- `manifest.json`: Metadata about the recording and attachments.
+- `video/ recording.webm`: The main screen/camera capture.
+- `codes/`, `documents/`, `images/`, `links/`, `audio/`: Subfolders containing the attachments.
 
 ---
 
