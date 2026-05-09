@@ -205,7 +205,15 @@ export function generateMetaIconSvg(files) {
 export function createMetaIconElement(files, onCategoryClick) {
   const container = document.createElement('div');
   container.className = 'asyncron-metaicon-container';
-  container.innerHTML = generateMetaIconSvg(files);
+  
+  // Safely parse the SVG string
+  const svgString = generateMetaIconSvg(files);
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(svgString, 'image/svg+xml');
+  const svgNode = doc.documentElement;
+  
+  // Ensure the element is appended to the container
+  container.appendChild(svgNode);
 
   container.addEventListener('click', (e) => {
     const target = e.target.closest('.asyncron-interactive');
