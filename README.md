@@ -2,58 +2,58 @@
 
 ![Asyncron Logo](assets/logo.png)
 
-Asyncron es una herramienta local-first para comunicación asíncrona. Permite grabar tu pantalla y adjuntar archivos (código, documentos, enlaces) en un único bundle `.async` seguro y privado.
+Asyncron is a local-first tool for asynchronous communication. It allows you to record your screen and attach files (code, documents, links) into a single, secure, and private `.async` bundle.
 
 ---
 
-## 🚀 Características Principales
+## 🚀 Key Features
 
-- **Grabación Multimodal:** Captura pantalla, cámara o ambos simultáneamente.
-- **Bundling Inteligente:** Empaqueta grabaciones con archivos adjuntos en un formato `.async` (basado en TAR).
-- **Visor Independiente:** Reproduce y extrae archivos sin necesidad de servidores externos.
-- **Cross-Browser:** Soporte completo para Chrome (MV3) y Firefox (MV2).
-- **Privacidad Total:** Todo el procesamiento ocurre localmente en tu navegador.
+- **Multimodal Recording:** Capture screen, camera, or both simultaneously.
+- **Smart Bundling:** Packages recordings with attachments in an `.async` format (based on TAR).
+- **Standalone Viewer:** Play recordings and extract files without needing external servers.
+- **Cross-Browser:** Full support for Chrome (MV3) and Firefox (MV2).
+- **Total Privacy:** All processing happens locally in your browser.
 
-## 📂 Estructura del Proyecto
+## 📂 Project Structure
 
-- `asyncron-chrome/`: Extensión para Google Chrome (Manifest V3).
-- `asyncron-firefox/`: Extensión para Mozilla Firefox (Manifest V2).
-- `assets/`: Recursos visuales y branding.
-- `scripts/`: Herramientas de automatización y mantenimiento.
+- `asyncron-chrome/`: Extension for Google Chrome (Manifest V3).
+- `asyncron-firefox/`: Extension for Mozilla Firefox (Manifest V2).
+- `assets/`: Visual assets and branding.
+- `scripts/`: Automation and maintenance tools.
 
 ---
 
-## 🛠️ Guía de Instalación (Modo Desarrollador)
+## 🛠️ Installation Guide (Developer Mode)
 
 ### Chrome / Edge / Brave
-1.  Ve a `chrome://extensions/`.
-2.  Activa el **Modo de desarrollador** (esquina superior derecha).
-3.  Haz clic en **Cargar descomprimida**.
-4.  Selecciona la carpeta `asyncron-chrome/`.
+1.  Navigate to `chrome://extensions/`.
+2.  Enable **Developer mode** (top right corner).
+3.  Click **Load unpacked**.
+4.  Select the `asyncron-chrome/` folder.
 
 ### Firefox
-1.  Ve a `about:debugging#/runtime/this-firefox`.
-2.  Haz clic en **Cargar complemento temporal**.
-3.  Selecciona el archivo `manifest.json` dentro de `asyncron-firefox/`.
+1.  Navigate to `about:debugging#/runtime/this-firefox`.
+2.  Click **Load Temporary Add-on...**.
+3.  Select the `manifest.json` file inside `asyncron-firefox/`.
 
 ---
 
-## 📺 Visor Standalone
-Asyncron ahora incluye un visor de escritorio completo que desacopla la visualización de la interfaz de la extensión.
+## 📺 Standalone Viewer
+Asyncron now includes a full desktop viewer that decouples viewing from the extension interface.
 
-- **Acceso:** Puedes abrirlo desde la pestaña **VIEWER** de la extensión o abriendo directamente el archivo `viewer.html` en cualquier navegador.
-- **Uso:** Arrastra cualquier archivo `.async` al área de soltado.
-- **Funciones:** Reproductor de video integrado, descarga individual de archivos y previsualización de enlaces con protocolo automático.
-
----
-
-## 🏗️ Arquitectura Técnica
-
-- **Formato .async:** Basado en el estándar TAR para máxima compatibilidad.
-- **Criptografía local:** Los bundles se generan íntegramente en el cliente.
-- **Polyfill:** Utiliza `webextension-polyfill` para garantizar la interoperabilidad de las APIs de Chrome y Firefox.
+- **Access:** Open it from the **VIEWER** tab in the extension or by opening `viewer.html` directly in any browser.
+- **Usage:** Drag and drop any `.async` file onto the drop zone.
+- **Features:** Integrated video player, individual file downloads, and automatic link protocol handling.
 
 ---
 
-## 📄 Licencia
-Este proyecto es de código abierto y está disponible bajo la licencia MIT.
+## 🏗️ Technical Architecture
+
+- **.async Format:** Based on the TAR standard for maximum compatibility.
+- **Local Cryptography:** Bundles are generated entirely on the client side.
+- **Polyfill:** Uses `webextension-polyfill` to ensure interoperability between Chrome and Firefox APIs.
+
+---
+
+## 📄 License
+This project is open source and available under the MIT License.
