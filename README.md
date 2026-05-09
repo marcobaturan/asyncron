@@ -1,97 +1,59 @@
-# Asyncron 📺
+# Asyncron
 
-![Asyncron Logo](./assets/logo.png)
+![Asyncron Logo](assets/logo.png)
 
-**Asyncron** is a high-fidelity asynchronous communication tool designed for remote teams with flexible schedules and rotating shifts. It enables you to record video messages (screen/camera) and package them alongside critical files (code, documents, images, and links) into a single, cohesive `.async` bundle.
-
-## 📁 Repository Structure
-
-- `asyncron-chrome/`: Chrome Extension (Manifest V3)
-- `asyncron-firefox/`: Firefox Extension (Manifest V2)
-
-Both versions share the same core logic and UI, but are optimized for their respective browser requirements.
+Asyncron es una herramienta local-first para comunicación asíncrona. Permite grabar tu pantalla y adjuntar archivos (código, documentos, enlaces) en un único bundle `.async` seguro y privado.
 
 ---
 
-## 🌐 Why Asyncron? High-Fidelity Remote Collaboration
+## 🚀 Características Principales
 
-In environments with **flexible hours and time-zone gaps**, real-time meetings are often a bottleneck. Pure text lacks nuance, and scattered attachments lose their context.
+- **Grabación Multimodal:** Captura pantalla, cámara o ambos simultáneamente.
+- **Bundling Inteligente:** Empaqueta grabaciones con archivos adjuntos en un formato `.async` (basado en TAR).
+- **Visor Independiente:** Reproduce y extrae archivos sin necesidad de servidores externos.
+- **Cross-Browser:** Soporte completo para Chrome (MV3) y Firefox (MV2).
+- **Privacidad Total:** Todo el procesamiento ocurre localmente en tu navegador.
 
-Asyncron bridges this gap by providing:
-*   **Context Preservation:** Don't just send a video; send the video *anchored* to the exact code files, requirement PDFs, and reference links needed to act.
-*   **Zero-Overhead Organization:** Instead of 5 disjointed attachments in a chat thread, the recipient receives a single, organized container.
-*   **On-Demand Consumption:** A teammate starting their shift hours later has everything they need in one place, reducing the need for "where is that file?" follow-up questions.
+## 📂 Estructura del Proyecto
 
----
-
-## 🔄 Complete Workflow Example
-
-Imagine you are a Lead Developer working in Europe, and your QA Engineer is in Australia.
-
-![Workflow Schematic](./asyncron-chrome/workflow.svg)
-
-1.  **RECORD:** You open Asyncron and record a 2-minute walkthrough of a new feature implementation using the **Screen + Camera** mode.
-2.  **ATTACH:** You add the relevant `.js` and `.css` files, a screenshot of the expected UI, and a link to the Pull Request.
-3.  **BUNDLE:** You click **CREATE BUNDLE**. Asyncron generates `feature_v1.async`.
-4.  **SHARE:** You drop the `.async` file into your team's Slack or WhatsApp. You go to sleep.
-5.  **VIEW:** Your QA Engineer wakes up, downloads the file, and Asyncron's viewer opens automatically. They watch your explanation while having direct access to the code and links to start testing immediately.
+- `asyncron-chrome/`: Extensión para Google Chrome (Manifest V3).
+- `asyncron-firefox/`: Extensión para Mozilla Firefox (Manifest V2).
+- `assets/`: Recursos visuales y branding.
+- `scripts/`: Herramientas de automatización y mantenimiento.
 
 ---
 
-## 🛠️ Installation Guide (Developer Mode)
+## 🛠️ Guía de Instalación (Modo Desarrollador)
 
-### Chrome Installation
-1.  Navigate to `chrome://extensions/` in your browser.
-2.  Enable **"Developer mode"** (top right toggle).
-3.  Click **"Load unpacked"**.
-4.  Select the `asyncron-chrome/` folder in this repository.
-5.  The extension appears in your toolbar.
+### Chrome / Edge / Brave
+1.  Ve a `chrome://extensions/`.
+2.  Activa el **Modo de desarrollador** (esquina superior derecha).
+3.  Haz clic en **Cargar descomprimida**.
+4.  Selecciona la carpeta `asyncron-chrome/`.
 
-### Firefox Installation
-1.  Navigate to `about:debugging` in Firefox.
-2.  Click **"This Firefox"** in the sidebar.
-3.  Click **"Load Temporary Add-on..."**.
-4.  Navigate to the `asyncron-firefox/` folder and select `manifest.json`.
-5.  The extension appears in your toolbar.
-*Note: Temporary add-ons are removed when Firefox restarts. For permanent installation, use Firefox Developer Edition.*
+### Firefox
+1.  Ve a `about:debugging#/runtime/this-firefox`.
+2.  Haz clic en **Cargar complemento temporal**.
+3.  Selecciona el archivo `manifest.json` dentro de `asyncron-firefox/`.
 
 ---
 
-## 📖 Detailed User Manual
+## 📺 Visor Standalone
+Asyncron ahora incluye un visor de escritorio completo que desacopla la visualización de la interfaz de la extensión.
 
-### 1. Creating a Bundle (CREATE Tab)
-*   **Select Source:** Choose **Screen**, **Camera**, or **Both** (Picture-in-Picture mode).
-*   **Start Recording:** Click **REC**. Select the window or tab to capture if prompted.
-*   **Add Context:**
-    *   **+ Add Files:** Upload any file. The extension automatically categorizes it.
-    *   **+ Add Link:** Paste a URL to create an interactive shortcut inside the bundle.
-*   **Finalize:** Click **STOP**, then click **CREATE BUNDLE**.
-
-### 2. Viewing a Bundle (VIEWER Tab)
-*   **Auto-Detection:** When you download an `.async` file, the extension will prompt you to open it.
-*   **Manual Load:** Go to the **VIEWER** tab and drag & drop any `.async` file.
-*   **Interaction:** 
-    *   Click the **TV Screen** to download the main recording.
-    *   Click the **Control Panel Icons** to extract attachments.
-    *   **Links** will open directly in a new browser tab when clicked!
-
-### 🛡️ Bundle Recovery (Lost your file?)
-![Recovery Icon](./asyncron-chrome/recovery.svg)
-
-Sometimes you might lose track of where a teammate's bundle was saved. Asyncron includes a **Recovery Feature** in the Viewer tab:
-1.  **Scan:** It automatically lists the 5 most recent `.async` files found in your browser's download history.
-2.  **Locate:** Click the **LOCATE** button next to any file to open the folder and highlight it.
-3.  **Drag & View:** Drag that file into the Asyncron drop zone to start viewing.
+- **Acceso:** Puedes abrirlo desde la pestaña **VIEWER** de la extensión o abriendo directamente el archivo `viewer.html` en cualquier navegador.
+- **Uso:** Arrastra cualquier archivo `.async` al área de soltado.
+- **Funciones:** Reproductor de video integrado, descarga individual de archivos y previsualización de enlaces con protocolo automático.
 
 ---
 
-## 📦 Bundle Format (.async)
+## 🏗️ Arquitectura Técnica
 
-The `.async` bundle is a standard uncompressed `tar` archive containing:
-- `manifest.json`: Metadata about the recording and attachments.
-- `video/ recording.webm`: The main screen/camera capture.
-- `codes/`, `documents/`, `images/`, `links/`, `audio/`: Subfolders containing the attachments.
+- **Formato .async:** Basado en el estándar TAR para máxima compatibilidad.
+- **Criptografía local:** Los bundles se generan íntegramente en el cliente.
+- **Polyfill:** Utiliza `webextension-polyfill` para garantizar la interoperabilidad de las APIs de Chrome y Firefox.
 
 ---
 
-**Asyncron v0.1.0** - Built for asynchronous efficiency.
+## 📄 Licencia
+Este proyecto es de código abierto y está disponible bajo la licencia MIT.
